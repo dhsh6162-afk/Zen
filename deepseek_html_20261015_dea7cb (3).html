@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#121212">
+    <title>Flashlight Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone-screen {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            height: 100dvh;
+            background-color: #121212;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============ SCREEN 1: FLASHLIGHT UI ============ */
+        #flashlight-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            transition: background-color 0.4s ease;
+            padding: 20px;
+            background-color: #121212;
+        }
+
+        #flashlight-screen.on {
+            background-color: #fff9c4;
+        }
+
+        .flashlight-icon {
+            width: 130px;
+            height: 130px;
+            background: #333;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 60px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
+        }
+
+        #flashlight-screen.on .flashlight-icon {
+            background: #ffeb3b;
+            box-shadow: 0 0 80px #ffeb3b, 0 0 160px #ffeb3b;
+        }
+
+        .flashlight-icon svg {
+            width: 65px;
+            height: 65px;
+            fill: #fff;
+            transition: fill 0.4s ease;
+        }
+
+        #flashlight-screen.on .flashlight-icon svg {
+            fill: #333;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            padding: 0 10px;
+        }
+
+        .btn {
+            padding: 16px 45px;
+            border: none;
+            border-radius: 35px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            outline: none;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-on {
+            background-color: #ffeb3b;
+            color: #000;
+        }
+
+        .btn-on:active {
+            transform: scale(0.94);
+        }
+
+        .btn-off {
+            background-color: #333;
+            color: #888;
+        }
+
+        #flashlight-screen.on .btn-off {
+            background-color: #555;
+            color: #fff;
+            border: 1.5px solid #777;
+        }
+
+        .btn-off:active {
+            transform: scale(0.94);
+        }
+
+        /* ============ SCREEN 2: PREMIUM LOCK ============ */
+        #premium-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            background-color: #121212;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .header {
+            width: 100%;
+            padding: 18px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            flex-shrink: 0;
+        }
+
+        .header span {
+            color: #fff;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .header .close-btn {
+            color: #888;
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 5px;
+        }
+
+        .content-wrapper {
+            width: 100%;
+            padding: 40px 25px 30px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .title {
+            color: #ffeb3b;
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-tag {
+            color: #ffeb3b;
+            font-size: 85px;
+            font-weight: 900;
+            margin: 12px 0;
+            text-shadow: 0 0 35px rgba(255, 235, 59, 0.45);
+            line-height: 1;
+            letter-spacing: -3px;
+        }
+
+        .subtitle-1 {
+            color: #aaa;
+            font-size: 13px;
+            letter-spacing: 1.2px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .subtitle-2 {
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .features-box {
+            background: #1e1e1e;
+            border-radius: 20px;
+            padding: 22px 20px;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 32px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .features-box p {
+            color: #ccc;
+            font-size: 14.5px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            line-height: 1.4;
+        }
+
+        .features-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .emoji-icon {
+            font-size: 18px;
+            width: 26px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .unlock-btn {
+            background-color: #ffeb3b;
+            color: #000;
+            padding: 20px 20px;
+            border-radius: 55px;
+            font-size: 18px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(255, 235, 59, 0.35);
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+            outline: none;
+        }
+
+        .unlock-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* ============ SCROLLBAR HIDE ============ */
+        #premium-screen::-webkit-scrollbar {
+            display: none;
+        }
+
+        #premium-screen {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-screen" id="app">
+        
+        <!-- SCREEN 1: FLASHLIGHT UI -->
+        <div id="flashlight-screen">
+            <div class="flashlight-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 2L7 6V22H17V6L15 2H9ZM15 6H9V4H15V6Z"/>
+                </svg>
+            </div>
+            <div class="controls">
+                <button class="btn btn-on" id="btn-on">ON</button>
+                <button class="btn btn-off" id="btn-off">
+                    <span id="lock-icon" style="display: none;">🔒</span> OFF
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: PREMIUM LOCK -->
+        <div id="premium-screen">
+            <div class="header">
+                <span>Flashlight Pro</span>
+                <span class="close-btn" id="close-btn">✕</span>
+            </div>
+
+            <div class="content-wrapper">
+                <div class="title">🔒 Flashlight Pro™</div>
+                <div class="price-tag">₹1</div>
+                <div class="subtitle-1">ONE-TIME PAYMENT TO TURN IT OFF</div>
+                <div class="subtitle-2">
+                    Turning it on was free.<br>
+                    Turning it off is a premium experience.
+                </div>
+
+                <div class="features-box">
+                    <p><span class="emoji-icon">🔒</span> Unlock the legendary OFF button</p>
+                    <p><span class="emoji-icon">♾️</span> Unlimited off presses, forever</p>
+                    <p><span class="emoji-icon">🔋</span> Save your battery (eventually)</p>
+                    <p><span class="emoji-icon">⚡</span> Priority access to darkness</p>
+                </div>
+
+                <button class="unlock-btn" id="unlock-btn">Unlock OFF - ₹1.00</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // ============ ELEMENTS ============
+            const flashlightScreen = document.getElementById('flashlight-screen');
+            const premiumScreen = document.getElementById('premium-screen');
+            const btnOn = document.getElementById('btn-on');
+            const btnOff = document.getElementById('btn-off');
+            const lockIcon = document.getElementById('lock-icon');
+            const unlockBtn = document.getElementById('unlock-btn');
+            const closeBtn = document.getElementById('close-btn');
+
+            // ============ CONFIG ============
+            const UPI_ID = "deewuuu01@ptyes";
+            const AMOUNT = "1";
+            const PAYEE_NAME = "FlashlightPro";
+
+            // ============ BACK BUTTON BLOCK ============
+            history.pushState({ page: 'flashlight' }, null, location.href);
+            window.addEventListener('popstate', function() {
+                // Push again to prevent going back
+                history.pushState({ page: 'flashlight' }, null, location.href);
+            });
+
+            // ============ PAGE UNLOAD BLOCK ============
+            window.addEventListener('beforeunload', function(e) {
+                if (sessionStorage.getItem('paid') !== 'true') {
+                    e.preventDefault();
+                    e.returnValue = '';
+                    return '';
+                }
+            });
+
+            // ============ CHECK PAYMENT STATUS ON LOAD ============
+            if (sessionStorage.getItem('paid') === 'true') {
+                lockIcon.style.display = 'none';
+            }
+
+            // ============ ON BUTTON CLICK ============
+            btnOn.addEventListener('click', function() {
+                // 1. Screen yellow karo (fake torch ON)
+                flashlightScreen.classList.add('on');
+                
+                // 2. Lock dikhao
+                if (sessionStorage.getItem('paid') !== 'true') {
+                    lockIcon.style.display = 'inline';
+                }
+
+                // 3. Agar payment nahi hua, to 500ms baad Premium screen dikhao
+                if (sessionStorage.getItem('paid') !== 'true') {
+                    setTimeout(function() {
+                        flashlightScreen.style.display = 'none';
+                        premiumScreen.style.display = 'flex';
+                    }, 500);
+                }
+            });
+
+            // ============ OFF BUTTON CLICK ============
+            btnOff.addEventListener('click', function() {
+                // Check if torch is ON
+                if (!flashlightScreen.classList.contains('on')) {
+                    alert("Pehle torch ON karo bhai!");
+                    return;
+                }
+
+                // Agar payment ho chuka hai, to OFF kaam kare
+                if (sessionStorage.getItem('paid') === 'true') {
+                    flashlightScreen.classList.remove('on');
+                    lockIcon.style.display = 'none';
+                    return;
+                }
+
+                // Agar payment nahi hua, to Premium screen dikhao
+                flashlightScreen.style.display = 'none';
+                premiumScreen.style.display = 'flex';
+            });
+
+            // ============ CLOSE BUTTON (X) ============
+            closeBtn.addEventListener('click', function() {
+                // User ko bahar nikalne nahi dena
+                // Kuch bhi mat karo, ya alert do
+                // alert("Please complete the payment to unlock OFF.");
+                
+                // Optional: User ko wapas premium screen par hi rakho
+                // Kuch nahi karo, bas ignore karo
+            });
+
+            // ============ UNLOCK BUTTON (PAYMENT) ============
+            unlockBtn.addEventListener('click', function() {
+                // Mark as paid (Demo ke liye)
+                // NOTE: Real verification ke liye backend chahiye
+                sessionStorage.setItem('paid', 'true');
+                
+                // Build UPI Link
+                const upiLink = "upi://pay" +
+                    "?pa=" + encodeURIComponent(UPI_ID) +
+                    "&pn=" + encodeURIComponent(PAYEE_NAME) +
+                    "&am=" + AMOUNT +
+                    "&cu=INR" +
+                    "&tn=" + encodeURIComponent("Flashlight Unlock");
+
+                // Open UPI App
+                window.location.href = upiLink;
+
+                // After returning, unlock OFF
+                setTimeout(function() {
+                    lockIcon.style.display = 'none';
+                }, 2500);
+            });
+
+            // ============ PREVENT CONTEXT MENU ============
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            // ============ PREVENT DOUBLE TAP ZOOM ============
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+            // ============ PREVENT KEYBOARD SHORTCUTS ============
+            document.addEventListener('keydown', function(e) {
+                if (
+                    (e.ctrlKey && (e.key === 'r' || e.key === 'R' || e.key === 'w' || e.key === 'W')) ||
+                    e.key === 'F5' ||
+                    (e.altKey && e.key === 'ArrowLeft')
+                ) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+        })();
+    </script>
+</body>
+</html>
